@@ -40,7 +40,12 @@ describe('standalone CLI', () => {
     expect(result.exitCode).toBe(0);
     expect(pngSize(join(dir, 'my logo.png'))).toEqual([outWidth, outHeight]);
     expect(readFileSync(join(dir, 'my logo.svg'), 'utf8')).toBe(svg(width, height));
-  });
+    // The first spawned subprocess in the file pays a one-off cold-start cost
+    // (bun transpiling the entry file and loading the native resvg addon),
+    // which on Windows CI runners can exceed bun:test's default 5000ms
+    // timeout. Later spawns in this file are consistently fast, so this is
+    // a startup-latency allowance, not a sign anything is actually hanging.
+  }, 20000);
 
   test('rejects missing input without producing output', () => {
     const dir = tempDir();
