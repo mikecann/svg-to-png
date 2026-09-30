@@ -1,0 +1,23 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - run: bun build svg-to-png.ts --target=bun --external @resvg/resvg-js --outdir dist
+      - if: runner.os == 'macOS'
+        run: bash -n install.sh svg-to-png
+      - if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/check-powershell.ps1
+      - if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/test-install-lib.ps1

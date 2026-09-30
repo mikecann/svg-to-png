@@ -2,7 +2,12 @@
   "name": "svg-to-png",
   "private": true,
   "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "bun test",
+    "build": "bun build svg-to-png.ts --target=bun --external @resvg/resvg-js --outdir dist"
+  },
   "dependencies": {
-    "@resvg/resvg-js": "latest"
+    "@resvg/resvg-js": "2.6.2"
   }
 }
